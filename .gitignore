@@ -1,0 +1,3 @@
+# Registos gerados pelas ferramentas de diagnóstico
+*.log
+*.tmp
