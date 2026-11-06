@@ -4,10 +4,15 @@ $ErrorActionPreference = 'Stop'
 
 $backupPath = Join-Path $env:TEMP 'opencode\winlang-backup.json'
 New-Item -ItemType Directory -Force -Path (Split-Path $backupPath) | Out-Null
-Get-WinUserLanguageList |
-  ForEach-Object { [pscustomobject]@{ Tag = $_.LanguageTag; Tips = @($_.InputMethodTips) } } |
-  ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 $backupPath
-"Backup saved to $backupPath"
+if (-not (Test-Path $backupPath)) {
+  Get-WinUserLanguageList |
+    ForEach-Object { [pscustomobject]@{ Tag = $_.LanguageTag; Tips = @($_.InputMethodTips) } } |
+    ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 $backupPath
+  "Backup saved to $backupPath"
+}
+else {
+  "Backup already exists at $backupPath (not overwritten)"
+}
 
 function Enable-AppleLayout([string]$tip) {
   $list = Get-WinUserLanguageList
@@ -20,6 +25,7 @@ function Enable-AppleLayout([string]$tip) {
     $lang.InputMethodTips.Add($tip)
   }
   else {
+    if (-not ($list | Where-Object { $_.LanguageTag -eq 'en-US' })) { $list.Add('en-US') }
     $lang = $list | Where-Object { $_.LanguageTag -eq 'en-US' }
     if (-not ($lang.InputMethodTips -contains $tip)) { $lang.InputMethodTips.Insert(0, $tip) }
   }

@@ -7,7 +7,8 @@ O Windows escrevia caracteres de layout US e o layout PT standard não correspon
 ## Diagnóstico
 
 - `Get-WinUserLanguageList` mostrava apenas `en-US` com o tip `0409:00000409`.
-- `C:\Windows\System32\PortuguA.dll` existe e está assinado pela Apple (MSKLC 1.4), com o KLID `a0000416`.
+- `C:\Windows\System32\PortuguA.dll` existe, foi criado pela Apple (MSKLC 1.4,
+  versão 1.0.3.40) e está assinado pela Microsoft WHCP, com o KLID `a0000416`.
 - Descrição do layout: **Portuguese (Portugal) – Portuguese (Apple)**.
 - Valores HKL observados:
   - US: `67699721`
@@ -19,7 +20,6 @@ O Windows escrevia caracteres de layout US e o layout PT standard não correspon
 ```text
 HKCU\Keyboard Layout\Preload
   1 = 00000816
-  2 = 00000409
 
 HKCU\Keyboard Layout\Substitutes
   00000816 = a0000416
@@ -32,12 +32,16 @@ HKCU\Control Panel\International\User Profile
   `Portuguese (Portugal) - Portuguese (Apple)`.
 - `00000816` é a "ranhura" do layout PT standard; a entrada em `Substitutes`
   redirecciona-a para a DLL da Apple (`a0000416`).
+- No estado actual o `en-US` original já não está na lista de idiomas; o backup
+  em `%TEMP%\opencode\winlang-backup.json` mantém a lista original
+  (`0409:00000409`).
 
 ## Script
 
 [`../scripts/enable-apple-layout.ps1`](../scripts/enable-apple-layout.ps1):
 
-1. guarda um backup da lista de idiomas em `%TEMP%\opencode\winlang-backup.json`;
+1. guarda um backup da lista de idiomas em `%TEMP%\opencode\winlang-backup.json`
+   (só se ainda não existir, para não perder o original);
 2. adiciona/mantém `pt-PT` com o tip `0816:a0000416` (fallback: `0409:a0000416`);
 3. define o tip como predefinido;
 4. força a janela em primeiro plano a mudar para o HKL Apple através de
@@ -54,9 +58,13 @@ HKCU\Control Panel\International\User Profile
 
 ## Reverter
 
-1. Repor o método de entrada original (`0409:00000409`) como predefinido:
+1. Repor o método de entrada original (`0409:00000409`) como predefinido. Como
+   o `en-US` já não está na lista, é preciso voltar a adicioná-lo:
 
    ```powershell
+   $list = Get-WinUserLanguageList
+   if (-not ($list | Where-Object { $_.LanguageTag -eq 'en-US' })) { $list.Add('en-US') }
+   Set-WinUserLanguageList -LanguageList $list -Force
    Set-WinDefaultInputMethodOverride -InputTip '0409:00000409'
    ```
 
