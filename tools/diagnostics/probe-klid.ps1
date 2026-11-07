@@ -1,4 +1,5 @@
-Add-Type -TypeDefinition @'
+if (-not ('KlidProbe' -as [type])) {
+  Add-Type -TypeDefinition @'
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ public static class KlidProbe {
     public static extern int GetKeyboardLayoutName(StringBuilder name);
 }
 '@
+}
 $sb = New-Object System.Text.StringBuilder 64
 [void][KlidProbe]::GetKeyboardLayoutName($sb)
 "KLID: $($sb.ToString())"

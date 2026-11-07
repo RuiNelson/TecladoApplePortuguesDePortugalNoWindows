@@ -30,8 +30,8 @@ powershell -ExecutionPolicy Bypass -File .\key-hook.ps1
 
 ## `probe-klid.ps1`
 
-Mostra o KLID activo (`GetKeyboardLayoutName`), a lista de idiomas e o
-*default input method override*.
+Mostra o KLID activo (`GetKeyboardLayoutName`; deve ser `00000816`), a lista de
+idiomas e o *default input method override*.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\probe-klid.ps1
@@ -39,8 +39,10 @@ powershell -ExecutionPolicy Bypass -File .\probe-klid.ps1
 
 ## `kbdump.ps1`
 
-Compara o layout PT standard (`00000816`) com o layout Apple (`a0000416`)
-usando `ToUnicodeEx`, tecla a tecla (sem Shift / Shift / AltGr / Shift+AltGr).
+Compara o layout PT standard (`00000816`) com o layout Apple do Boot Camp
+(`a0000416`) usando `ToUnicodeEx`, tecla a tecla (sem Shift / Shift / AltGr /
+Shift+AltGr). Só é útil numa máquina com os drivers do Boot Camp; sem eles o
+Windows não tem o layout `a0000416`.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\kbdump.ps1

@@ -1,4 +1,5 @@
-Add-Type -TypeDefinition @'
+if (-not ('KbDump' -as [type])) {
+  Add-Type -TypeDefinition @'
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -31,6 +32,7 @@ public static class KbDump {
     }
 }
 '@
+}
 
 $keys = @(
   @(0x29,'top-left'), @(0x02,'1'), @(0x03,'2'), @(0x04,'3'), @(0x05,'4'), @(0x06,'5'),

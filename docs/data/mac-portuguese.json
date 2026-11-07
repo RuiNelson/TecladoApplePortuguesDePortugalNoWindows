@@ -1,0 +1,580 @@
+{
+  "keyboardType" : 4,
+  "keys" : [
+    {
+      "caps" : "<",
+      "macKeyCode" : 50,
+      "none" : "<",
+      "option" : "≤",
+      "position" : "top-left",
+      "shift" : ">",
+      "shiftOption" : "≥"
+    },
+    {
+      "caps" : "1",
+      "macKeyCode" : 18,
+      "none" : "1",
+      "option" : "",
+      "position" : "1",
+      "shift" : "!",
+      "shiftOption" : "¡"
+    },
+    {
+      "caps" : "2",
+      "macKeyCode" : 19,
+      "none" : "2",
+      "option" : "@",
+      "position" : "2",
+      "shift" : "\"",
+      "shiftOption" : "ﬁ"
+    },
+    {
+      "caps" : "3",
+      "macKeyCode" : 20,
+      "none" : "3",
+      "option" : "€",
+      "position" : "3",
+      "shift" : "#",
+      "shiftOption" : "ﬂ"
+    },
+    {
+      "caps" : "4",
+      "macKeyCode" : 21,
+      "none" : "4",
+      "option" : "£",
+      "position" : "4",
+      "shift" : "$",
+      "shiftOption" : "¢"
+    },
+    {
+      "caps" : "5",
+      "macKeyCode" : 23,
+      "none" : "5",
+      "option" : "‰",
+      "position" : "5",
+      "shift" : "%",
+      "shiftOption" : "∞"
+    },
+    {
+      "caps" : "6",
+      "macKeyCode" : 22,
+      "none" : "6",
+      "option" : "¶",
+      "position" : "6",
+      "shift" : "&",
+      "shiftOption" : "•"
+    },
+    {
+      "caps" : "7",
+      "macKeyCode" : 26,
+      "none" : "7",
+      "option" : "÷",
+      "position" : "7",
+      "shift" : "\/",
+      "shiftOption" : "⁄"
+    },
+    {
+      "caps" : "8",
+      "macKeyCode" : 28,
+      "none" : "8",
+      "option" : "[",
+      "position" : "8",
+      "shift" : "(",
+      "shiftOption" : "{"
+    },
+    {
+      "caps" : "9",
+      "macKeyCode" : 25,
+      "none" : "9",
+      "option" : "]",
+      "position" : "9",
+      "shift" : ")",
+      "shiftOption" : "}"
+    },
+    {
+      "caps" : "0",
+      "macKeyCode" : 29,
+      "none" : "0",
+      "option" : "≠",
+      "position" : "0",
+      "shift" : "=",
+      "shiftOption" : "≈"
+    },
+    {
+      "caps" : "'",
+      "macKeyCode" : 27,
+      "none" : "'",
+      "option" : "§",
+      "position" : "minus",
+      "shift" : "?",
+      "shiftOption" : "¿"
+    },
+    {
+      "caps" : "+",
+      "macKeyCode" : 24,
+      "none" : "+",
+      "option" : "±",
+      "position" : "equal",
+      "shift" : "*",
+      "shiftOption" : "◊"
+    },
+    {
+      "caps" : "Q",
+      "macKeyCode" : 12,
+      "none" : "q",
+      "option" : "œ",
+      "position" : "Q",
+      "shift" : "Q",
+      "shiftOption" : "Œ"
+    },
+    {
+      "caps" : "W",
+      "macKeyCode" : 13,
+      "none" : "w",
+      "option" : "∑",
+      "position" : "W",
+      "shift" : "W",
+      "shiftOption" : "∑"
+    },
+    {
+      "caps" : "E",
+      "macKeyCode" : 14,
+      "none" : "e",
+      "option" : "æ",
+      "position" : "E",
+      "shift" : "E",
+      "shiftOption" : "Æ"
+    },
+    {
+      "caps" : "R",
+      "macKeyCode" : 15,
+      "none" : "r",
+      "option" : "®",
+      "position" : "R",
+      "shift" : "R",
+      "shiftOption" : "®"
+    },
+    {
+      "caps" : "T",
+      "macKeyCode" : 17,
+      "none" : "t",
+      "option" : "™",
+      "position" : "T",
+      "shift" : "T",
+      "shiftOption" : "™"
+    },
+    {
+      "caps" : "Y",
+      "macKeyCode" : 16,
+      "none" : "y",
+      "option" : "¥",
+      "position" : "Y",
+      "shift" : "Y",
+      "shiftOption" : "¥"
+    },
+    {
+      "caps" : "U",
+      "macKeyCode" : 32,
+      "none" : "u",
+      "option" : "†",
+      "position" : "U",
+      "shift" : "U",
+      "shiftOption" : "‡"
+    },
+    {
+      "caps" : "I",
+      "macKeyCode" : 34,
+      "none" : "i",
+      "option" : "ı",
+      "position" : "I",
+      "shift" : "I",
+      "shiftOption" : "˚"
+    },
+    {
+      "caps" : "O",
+      "macKeyCode" : 31,
+      "none" : "o",
+      "option" : "ø",
+      "position" : "O",
+      "shift" : "O",
+      "shiftOption" : "Ø"
+    },
+    {
+      "caps" : "P",
+      "macKeyCode" : 35,
+      "none" : "p",
+      "option" : "π",
+      "position" : "P",
+      "shift" : "P",
+      "shiftOption" : "∏"
+    },
+    {
+      "caps" : "º",
+      "macKeyCode" : 33,
+      "none" : "º",
+      "option" : "°",
+      "position" : "lbracket",
+      "shift" : "ª",
+      "shiftOption" : "˚"
+    },
+    {
+      "caps" : {
+        "compositions" : {
+          " " : "´",
+          "a" : "á",
+          "A" : "Á",
+          "e" : "é",
+          "E" : "É",
+          "i" : "í",
+          "I" : "Í",
+          "o" : "ó",
+          "O" : "Ó",
+          "u" : "ú",
+          "U" : "Ú"
+        },
+        "dead" : "´"
+      },
+      "macKeyCode" : 30,
+      "none" : {
+        "compositions" : {
+          " " : "´",
+          "a" : "á",
+          "A" : "Á",
+          "e" : "é",
+          "E" : "É",
+          "i" : "í",
+          "I" : "Í",
+          "o" : "ó",
+          "O" : "Ó",
+          "u" : "ú",
+          "U" : "Ú"
+        },
+        "dead" : "´"
+      },
+      "option" : {
+        "compositions" : {
+          " " : "¨",
+          "a" : "ä",
+          "A" : "Ä",
+          "e" : "ë",
+          "E" : "Ë",
+          "i" : "ï",
+          "I" : "Ï",
+          "o" : "ö",
+          "O" : "Ö",
+          "u" : "ü",
+          "U" : "Ü",
+          "y" : "ÿ"
+        },
+        "dead" : "¨"
+      },
+      "position" : "rbracket",
+      "shift" : {
+        "compositions" : {
+          " " : "`",
+          "a" : "à",
+          "A" : "À",
+          "e" : "è",
+          "E" : "È",
+          "i" : "ì",
+          "I" : "Ì",
+          "o" : "ò",
+          "O" : "Ò",
+          "u" : "ù",
+          "U" : "Ù"
+        },
+        "dead" : "`"
+      },
+      "shiftOption" : "˝"
+    },
+    {
+      "caps" : "A",
+      "macKeyCode" : 0,
+      "none" : "a",
+      "option" : "å",
+      "position" : "A",
+      "shift" : "A",
+      "shiftOption" : "Å"
+    },
+    {
+      "caps" : "S",
+      "macKeyCode" : 1,
+      "none" : "s",
+      "option" : "ß",
+      "position" : "S",
+      "shift" : "S",
+      "shiftOption" : "ß"
+    },
+    {
+      "caps" : "D",
+      "macKeyCode" : 2,
+      "none" : "d",
+      "option" : "∂",
+      "position" : "D",
+      "shift" : "D",
+      "shiftOption" : "∆"
+    },
+    {
+      "caps" : "F",
+      "macKeyCode" : 3,
+      "none" : "f",
+      "option" : "ƒ",
+      "position" : "F",
+      "shift" : "F",
+      "shiftOption" : "ƒ"
+    },
+    {
+      "caps" : "G",
+      "macKeyCode" : 5,
+      "none" : "g",
+      "option" : "˙",
+      "position" : "G",
+      "shift" : "G",
+      "shiftOption" : "˙"
+    },
+    {
+      "caps" : "H",
+      "macKeyCode" : 4,
+      "none" : "h",
+      "option" : "ˇ",
+      "position" : "H",
+      "shift" : "H",
+      "shiftOption" : "ˇ"
+    },
+    {
+      "caps" : "J",
+      "macKeyCode" : 38,
+      "none" : "j",
+      "option" : "¯",
+      "position" : "J",
+      "shift" : "J",
+      "shiftOption" : "¯"
+    },
+    {
+      "caps" : "K",
+      "macKeyCode" : 40,
+      "none" : "k",
+      "option" : "„",
+      "position" : "K",
+      "shift" : "K",
+      "shiftOption" : "‚"
+    },
+    {
+      "caps" : "L",
+      "macKeyCode" : 37,
+      "none" : "l",
+      "option" : "‘",
+      "position" : "L",
+      "shift" : "L",
+      "shiftOption" : "’"
+    },
+    {
+      "caps" : "Ç",
+      "macKeyCode" : 41,
+      "none" : "ç",
+      "option" : "¸",
+      "position" : "semicolon",
+      "shift" : "Ç",
+      "shiftOption" : "˛"
+    },
+    {
+      "caps" : {
+        "compositions" : {
+          " " : "~",
+          "a" : "ã",
+          "A" : "Ã",
+          "n" : "ñ",
+          "N" : "Ñ",
+          "o" : "õ",
+          "O" : "Õ"
+        },
+        "dead" : "~"
+      },
+      "macKeyCode" : 39,
+      "none" : {
+        "compositions" : {
+          " " : "~",
+          "a" : "ã",
+          "A" : "Ã",
+          "n" : "ñ",
+          "N" : "Ñ",
+          "o" : "õ",
+          "O" : "Õ"
+        },
+        "dead" : "~"
+      },
+      "option" : {
+        "compositions" : {
+          " " : "˜",
+          "a" : "ã",
+          "A" : "Ã",
+          "n" : "ñ",
+          "N" : "Ñ",
+          "o" : "õ",
+          "O" : "Õ"
+        },
+        "dead" : "˜"
+      },
+      "position" : "quote",
+      "shift" : {
+        "compositions" : {
+          " " : "^",
+          "a" : "â",
+          "A" : "Â",
+          "e" : "ê",
+          "E" : "Ê",
+          "i" : "î",
+          "I" : "Î",
+          "o" : "ô",
+          "O" : "Ô",
+          "u" : "û",
+          "U" : "Û"
+        },
+        "dead" : "^"
+      },
+      "shiftOption" : {
+        "compositions" : {
+          " " : "ˆ",
+          "a" : "â",
+          "A" : "Â",
+          "e" : "ê",
+          "E" : "Ê",
+          "i" : "î",
+          "I" : "Î",
+          "o" : "ô",
+          "O" : "Ô",
+          "u" : "û",
+          "U" : "Û"
+        },
+        "dead" : "ˆ"
+      }
+    },
+    {
+      "caps" : "\\",
+      "macKeyCode" : 42,
+      "none" : "\\",
+      "option" : "‹",
+      "position" : "backslash",
+      "shift" : "|",
+      "shiftOption" : "›"
+    },
+    {
+      "caps" : "§",
+      "macKeyCode" : 10,
+      "none" : "§",
+      "option" : "§",
+      "position" : "iso-left-of-z",
+      "shift" : "±",
+      "shiftOption" : "±"
+    },
+    {
+      "caps" : "Z",
+      "macKeyCode" : 6,
+      "none" : "z",
+      "option" : "Ω",
+      "position" : "Z",
+      "shift" : "Z",
+      "shiftOption" : "Ω"
+    },
+    {
+      "caps" : "X",
+      "macKeyCode" : 7,
+      "none" : "x",
+      "option" : "«",
+      "position" : "X",
+      "shift" : "X",
+      "shiftOption" : "»"
+    },
+    {
+      "caps" : "C",
+      "macKeyCode" : 8,
+      "none" : "c",
+      "option" : "©",
+      "position" : "C",
+      "shift" : "C",
+      "shiftOption" : "©"
+    },
+    {
+      "caps" : "V",
+      "macKeyCode" : 9,
+      "none" : "v",
+      "option" : "√",
+      "position" : "V",
+      "shift" : "V",
+      "shiftOption" : "√"
+    },
+    {
+      "caps" : "B",
+      "macKeyCode" : 11,
+      "none" : "b",
+      "option" : "∫",
+      "position" : "B",
+      "shift" : "B",
+      "shiftOption" : "∫"
+    },
+    {
+      "caps" : "N",
+      "macKeyCode" : 45,
+      "none" : "n",
+      "option" : "¬",
+      "position" : "N",
+      "shift" : "N",
+      "shiftOption" : "¬"
+    },
+    {
+      "caps" : "M",
+      "macKeyCode" : 46,
+      "none" : "m",
+      "option" : "µ",
+      "position" : "M",
+      "shift" : "M",
+      "shiftOption" : "µ"
+    },
+    {
+      "caps" : ",",
+      "macKeyCode" : 43,
+      "none" : ",",
+      "option" : "“",
+      "position" : "comma",
+      "shift" : ";",
+      "shiftOption" : "”"
+    },
+    {
+      "caps" : ".",
+      "macKeyCode" : 47,
+      "none" : ".",
+      "option" : "…",
+      "position" : "period",
+      "shift" : ":",
+      "shiftOption" : "·"
+    },
+    {
+      "caps" : "-",
+      "macKeyCode" : 44,
+      "none" : "-",
+      "option" : "—",
+      "position" : "slash",
+      "shift" : "_",
+      "shiftOption" : "–"
+    },
+    {
+      "caps" : " ",
+      "macKeyCode" : 49,
+      "none" : " ",
+      "option" : " ",
+      "position" : "space",
+      "shift" : " ",
+      "shiftOption" : " "
+    },
+    {
+      "caps" : ",",
+      "macKeyCode" : 65,
+      "none" : ",",
+      "option" : ",",
+      "position" : "keypad-decimal",
+      "shift" : ".",
+      "shiftOption" : "."
+    }
+  ],
+  "source" : "com.apple.keylayout.Portuguese"
+}

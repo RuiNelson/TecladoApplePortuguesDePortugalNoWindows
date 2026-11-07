@@ -1,59 +1,69 @@
-# Teclado Apple Português de Portugal no Windows 11
+# Teclado Apple Português de Portugal no Windows
 
-O layout foi testado num iMac 2017 com teclado Apple Magic Keyboard 2, mas deve funcionar noutros sistemas, incluindo portáteis, e incluindo computadores não Apple que estejam a usar um teclado da Apple.
+Configura o Windows para que um teclado Apple PT-PT (por exemplo, o Magic Keyboard) escreva o que está gravado nas teclas. Usa só o layout **Português** que já vem com o Windows e um `Scancode Map` no registo: não instala drivers nem DLLs. Por isso funciona no Boot Camp e em máquinas virtuais (Parallels, VMware Fusion, UTM…), em x64 e em ARM64.
 
-- layout Apple PT-PT correcto (`a0000416`) em vez do layout PT standard;
-- correcção das teclas `<>` e `§ ±`, que neste teclado estão invertidas em relação ao layout do Boot Camp;
-- troca do `Command` esquerdo por `Ctrl` e do `Ctrl` esquerdo pela tecla `Windows`;
-- troca do `Command` direito (o teclado Apple não tem `Ctrl` desse lado) por `Ctrl` direito;
+- 6 teclas trocadas de lugar para os caracteres coincidirem com os keycaps Apple;
+- `Command` esquerdo → `Ctrl`, `Ctrl` esquerdo → tecla `Windows`, `Command` direito → `Ctrl` direito;
+- opção para VMs que trocam entre si as teclas `<>` e `§ ±`;
 - investigação da tecla **Eject** (consumida pelo filtro `KeyMagic2` do Boot Camp).
 
-> **Estado:** a funcionar e confirmado após reinício (6 de Novembro de 2026).
+> **Estado:** esta versão (layout Português do Windows + `Scancode Map`) ainda não foi testada no Windows. A versão anterior, que usava o layout Apple do Boot Camp, foi confirmada num iMac a 6 de Novembro de 2026.
 
 ---
 
-## Resultado final
+## Resultado
 
-| Tecla física | Comportamento no Windows |
+| Tecla física (keycap Apple) | No Windows |
 |---|---|
-| `<>` (canto superior esquerdo) | `§` / `±` |
-| `§ ±` (ao lado do Shift esquerdo) | `<` / `>` |
+| Letras, números, `' ?`, `` ´ ` `` (mortas), `ç Ç`, `, ;`, `. :`, `- _` | iguais ao keycap |
+| `<>` (canto superior esquerdo) | `<` / `>` |
+| `+ *` | `+` / `*` |
+| `º ª` | `º` / `ª` |
+| `~ ^` | `~` / `^` (teclas mortas) |
+| `\ \|` | `\` / `\|` |
+| `§ ±` (ao lado do Shift esquerdo) | `«` / `»` (o layout Português não tem `§ ±` numa tecla) |
 | `Command` esquerdo | `Ctrl` esquerdo |
 | `Ctrl` esquerdo | tecla `Windows` (menu Iniciar) |
 | `Command` direito | `Ctrl` direito |
-| `Ctrl` direito (noutros teclados) | `Ctrl` direito (inalterado) |
 | `Option` direito | `AltGr` |
-| `AltGr + 2` | `@` |
-| `AltGr + 3` | `€` |
-| `AltGr + Shift + 8` / `9` | `{` / `}` |
-| `Fn` + tecla | F1–F12, Delete, Home, End |
 | Print Screen | não existe; usar `Win + Shift + S` |
+
+### Símbolos com `AltGr`
+
+O layout Português do Windows tem alguns símbolos noutras teclas do que o macOS:
+
+| Símbolo | macOS (teclado Apple) | Windows (esta configuração) |
+|---|---|---|
+| `@` | `⌥ 2` | `AltGr + 2` (igual) |
+| `[` `]` | `⌥ 8` / `⌥ 9` | `AltGr + 8` / `AltGr + 9` (igual) |
+| `{` `}` | `⇧ ⌥ 8` / `⇧ ⌥ 9` | `AltGr + 7` / `AltGr + 0` |
+| `€` | `⌥ 3` | `AltGr + E` ou `AltGr + 5` |
+| `£` | `⌥ 4` | `AltGr + 3` |
+| `§` | tecla `§ ±` | `AltGr + 4` |
+| `¨` (morta) | `⌥ ´` | `AltGr` + tecla `+ *` |
+| `«` `»` | `⌥ X` / `⇧ ⌥ X` | tecla `§ ±` |
+| `±`, `œ`, `æ`, `©`, `®`, `™`, `…`, etc. | `⌥` + tecla | não existem no layout Português |
+
+- O `AltGr` também se obtém com `Command` + `Option` esquerdo (que ficam `Ctrl` + `Alt`).
+- O ponto do teclado numérico escreve `.` (no macOS escreve `,`).
 
 ---
 
-## O que foi feito
+## Como funciona
 
-1. **Layout Apple em vez do layout PT standard**
-   O Windows só tinha `English (US)` activo. Foi instalado/seleccionado o layout `a0000416` — *Portuguese (Portugal) – Portuguese (Apple)* — e definido como predefinido.
+O layout Português do Windows (`00000816`, `kbdpo.dll`) e os keycaps Apple PT-PT só diferem, em Normal e Shift, em 6 teclas. O `Scancode Map` muda essas 6 teclas de sítio e troca os modificadores. A comparação foi feita com o layout Portuguese do próprio macOS, exportado com [`tools/macos/dump-mac-layout.swift`](tools/macos/dump-mac-layout.swift) para [`docs/data/mac-portuguese.json`](docs/data/mac-portuguese.json). Detalhes em [`docs/01-layout-pt.md`](docs/01-layout-pt.md) e [`docs/02-scancode-map.md`](docs/02-scancode-map.md).
 
-2. **Correcção `<>` / `§ ±`**
-   O Boot Camp mapeia o scancode `0x29` para `§ ±` e o `0x56` para `<>`. Os keycaps deste teclado estão ao contrário: `0x29` é `<>` e `0x56` é `§ ±`. Os dois scancodes foram trocados através do `Scancode Map`.
-
-3. **Command / Ctrl**
-   O `Command` esquerdo (`0xE05B`) passou a `Ctrl` esquerdo (`0x001D`); o `Ctrl` esquerdo passou a tecla `Windows` (`0xE05B`). No lado direito, como o teclado Apple não tem `Ctrl`, o `Command` direito (`0xE05C`) passou a `Ctrl` direito (`0xE01D`).
-
-4. **Eject**
-   Investigada. O Windows não recebe nada porque o filtro de teclado da Apple (`KeyMagic2`) intercepta as teclas especiais antes de elas chegarem às aplicações. Não foi alterado nada. Detalhes em [`docs/03-eject-key.md`](docs/03-eject-key.md).
+O layout Apple do Boot Camp (`a0000416`) deixou de ser usado: só existe com os drivers do Boot Camp, que são x64, e não está disponível em VMs nem em Windows ARM64.
 
 ---
 
 ## Aplicar
 
-Requer **administrador** para o mapa de scancodes e **reinício** para ele entrar em vigor.
+Requer **administrador** para o mapa de scancodes e **reinício** para ele entrar em vigor. Os comandos correm-se a partir da pasta do repositório (a que tem o `README.md`).
 
 ```powershell
-# 1) Layout Apple PT-PT (por utilizador; não precisa de admin)
-powershell -ExecutionPolicy Bypass -File .\scripts\enable-apple-layout.ps1
+# 1) Layout Português do Windows (por utilizador; não precisa de admin)
+powershell -ExecutionPolicy Bypass -File .\scripts\enable-pt-layout.ps1
 
 # 2) Mapa de scancodes (executar como administrador)
 powershell -ExecutionPolicy Bypass -File .\scripts\set-scancode-map.ps1
@@ -64,7 +74,22 @@ powershell -ExecutionPolicy Bypass -File .\scripts\set-scancode-map.ps1
 O script `set-scancode-map.ps1` tem `#requires -RunAsAdministrator`. Se não estiveres numa consola elevada, abre o PowerShell como administrador ou usa:
 
 ```powershell
-Start-Process powershell.exe -Verb RunAs -WorkingDirectory (Get-Location) -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','.\scripts\set-scancode-map.ps1'
+Start-Process powershell.exe -Verb RunAs -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-NoExit','-File',"`"$((Resolve-Path .\scripts\set-scancode-map.ps1).Path)`""
+```
+
+O caminho tem de ser absoluto: com `-Verb RunAs`, o PowerShell elevado arranca sempre em `C:\Windows\System32` e ignora o `-WorkingDirectory`. O `-NoExit` mantém a janela aberta para veres o resultado (também fica em `%TEMP%\opencode\scancode-log.txt`). Para passar opções (ver abaixo), acrescenta-as no fim da lista, por exemplo `...,'-SwapIsoKeys'`.
+
+### Confirmar depois de reiniciar (sobretudo em VMs)
+
+Cada programa de virtualização pode enviar ao Windows scancodes diferentes para algumas teclas. Abre o Notepad e confirma:
+
+- **Tecla do canto superior esquerdo (`<>`):** se escrever `<`, está certo. Se escrever `«`, a VM troca as duas teclas ISO: volta a correr o passo 2 com `-SwapIsoKeys` e reinicia.
+- **`Command` + `C` / `Command` + `V`:** devem copiar e colar. Se o `Command` abrir o menu Iniciar ou não funcionar como `Ctrl`, a VM já está a traduzir os modificadores (por exemplo, com perfis de atalhos do Parallels ou do VMware Fusion): volta a correr o passo 2 com `-KeepModifiers`, ou desliga essa tradução na VM.
+
+As duas opções podem ser usadas em conjunto:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\set-scancode-map.ps1 -SwapIsoKeys -KeepModifiers
 ```
 
 ---
@@ -72,21 +97,21 @@ Start-Process powershell.exe -Verb RunAs -WorkingDirectory (Get-Location) -Argum
 ## Reverter
 
 ```powershell
-# Remover o mapa de scancodes e reiniciar
+# Remover o mapa de scancodes (como administrador) e reiniciar
 powershell -ExecutionPolicy Bypass -File .\scripts\undo-scancode-map.ps1
 ```
 
-Para voltar ao layout original, ver a secção **Reverter** em [`docs/01-layout-apple-pt-pt.md`](docs/01-layout-apple-pt-pt.md).
+Para voltar ao layout original, ver a secção **Reverter** em [`docs/01-layout-pt.md`](docs/01-layout-pt.md).
 
 ---
 
 ## Avisos
 
-- O `Scancode Map` é **global**: aplica-se a todos os teclados ligados ao PC (incluindo o Logitech) e ao ecrã de início de sessão.
+- O `Scancode Map` é **global**: aplica-se a todos os teclados ligados ao PC e ao ecrã de início de sessão. Num teclado de PC português, as 6 teclas trocadas ficam erradas (por exemplo, a tecla `« »` passa a escrever `+ *`), e a tecla `Windows` direita passa a `Ctrl` direito.
 - As alterações ao `Scancode Map` só entram em vigor **depois de reiniciar**.
 - O `Scancode Map` só remapeia *scancodes*. Não vê teclas HID do tipo *consumer* (Eject, volume, multimedia); para essas é preciso software/driver.
+- O mapa pressupõe o layout **Português** activo. Com outro layout (por exemplo, o Apple do Boot Camp), as teclas trocadas escrevem outros caracteres; o `enable-pt-layout.ps1` tira o layout Apple da lista de idiomas.
 - Algumas aplicações mantêm o layout antigo até serem reiniciadas; `Win + Space` ajuda a alternar.
-- Se usares outro teclado com frequência, tem em conta que o `Scancode Map` também lhe troca as teclas correspondentes (incluindo a tecla `Windows` direita, que passa a `Ctrl` direito).
 
 ---
 
@@ -94,22 +119,24 @@ Para voltar ao layout original, ver a secção **Reverter** em [`docs/01-layout-
 
 | Caminho | Descrição |
 |---|---|
-| [`docs/01-layout-apple-pt-pt.md`](docs/01-layout-apple-pt-pt.md) | Como o layout Apple foi seleccionado, valores de registo e como reverter |
-| [`docs/02-scancode-map.md`](docs/02-scancode-map.md) | Formato do `Scancode Map`, bytes usados, tabela de trocas e efeitos |
+| [`docs/01-layout-pt.md`](docs/01-layout-pt.md) | Layout Português do Windows vs keycaps Apple, como foi comparado e como reverter |
+| [`docs/02-scancode-map.md`](docs/02-scancode-map.md) | Formato do `Scancode Map`, bytes usados, opções e efeitos |
 | [`docs/03-eject-key.md`](docs/03-eject-key.md) | Investigação da tecla Eject e do filtro `KeyMagic2` |
-| [`scripts/enable-apple-layout.ps1`](scripts/enable-apple-layout.ps1) | Activa o layout Apple PT-PT e define-o como predefinido |
-| [`scripts/set-scancode-map.ps1`](scripts/set-scancode-map.ps1) | Grava o `Scancode Map` (5 trocas) |
+| [`docs/data/mac-portuguese.json`](docs/data/mac-portuguese.json) | Layout Portuguese do macOS exportado (teclado ISO) |
+| [`scripts/enable-pt-layout.ps1`](scripts/enable-pt-layout.ps1) | Activa o layout Português do Windows e define-o como predefinido |
+| [`scripts/set-scancode-map.ps1`](scripts/set-scancode-map.ps1) | Grava o `Scancode Map` (opções `-SwapIsoKeys` e `-KeepModifiers`) |
 | [`scripts/undo-scancode-map.ps1`](scripts/undo-scancode-map.ps1) | Remove o `Scancode Map` |
-| [`tools/diagnostics/`](tools/diagnostics/) | Ferramentas de diagnóstico (key spy, dump do layout, KLID) |
+| [`tools/diagnostics/`](tools/diagnostics/) | Ferramentas de diagnóstico no Windows (key spy, dump do layout, KLID) |
+| [`tools/macos/dump-mac-layout.swift`](tools/macos/dump-mac-layout.swift) | Exporta um layout de teclado do macOS para JSON |
 
 ---
 
-## Contexto testado
+## Contexto
 
-- **Máquina:** Apple iMac18,3 (Boot Camp), Windows 11 Pro `10.0.26300`.
-- **Teclado:** Apple Magic Keyboard PT-PT, ligado por Bluetooth, `VID&0001004C_PID&0267`.
-- **Layout Apple:** KLID `a0000416`, implementado por `C:\Windows\System32\PortuguA.dll` (MSKLC 1.4, criado pela Apple e assinado pela Microsoft WHCP).
-- **Teclado secundário:** Logitech (o `Scancode Map` também o afecta).
+- **Teclado:** Apple Magic Keyboard PT-PT (ISO), `VID&0001004C_PID&0267`.
+- **Layout Windows:** Português, KLID `00000816`, `kbdpo.dll` (tabelas da versão 10.0.25393.1, publicadas em [kbdlayout.info](https://kbdlayout.info/kbdpo/)).
+- **Layout de referência:** Portuguese do macOS (`com.apple.keylayout.Portuguese`).
+- **Versão anterior (layout Apple do Boot Camp):** testada num Apple iMac18,3 com Windows 11 Pro `10.0.26300`.
 
 ---
 

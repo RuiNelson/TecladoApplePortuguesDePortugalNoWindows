@@ -1,35 +1,74 @@
-#requires -RunAsAdministrator
+﻿#requires -RunAsAdministrator
 # Aplica o Scancode Map descrito em docs/02-scancode-map.md.
+# Pressupoe o layout Portugues do Windows (00000816): correr antes enable-pt-layout.ps1.
 # Depois de correr, reiniciar o Windows.
+# Gravado em UTF-8 com BOM para o Windows PowerShell 5.1 ler bem os caracteres § ± « » º ª.
+#
+#   -SwapIsoKeys    para VMs que trocam a tecla do canto superior esquerdo com a
+#                   do lado do Shift esquerdo. Sinal: depois de reiniciar, a tecla
+#                   do canto superior esquerdo escreve « em vez de <.
+#   -KeepModifiers  nao troca Command/Ctrl (por exemplo, se a VM ja o faz).
+param(
+    [switch]$SwapIsoKeys,
+    [switch]$KeepModifiers
+)
 $ErrorActionPreference = 'Stop'
 $log = Join-Path $env:TEMP 'opencode\scancode-log.txt'
 New-Item -ItemType Directory -Force -Path (Split-Path $log) | Out-Null
 
-try {
-    $key = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout'
-    $bytes = [byte[]](
-        0x00, 0x00, 0x00, 0x00,   # version
-        0x00, 0x00, 0x00, 0x00,   # flags
-        0x06, 0x00, 0x00, 0x00,   # 6 entries (5 swaps + terminator)
-        0x56, 0x00, 0x29, 0x00,   # new 0x56   <- old 0x29   (<> -> §±)
-        0x29, 0x00, 0x56, 0x00,   # new 0x29   <- old 0x56   (§± -> <>)
-        0x1D, 0x00, 0x5B, 0xE0,   # new 0x1D   <- old 0xE05B (Cmd esq -> Ctrl esq)
-        0x5B, 0xE0, 0x1D, 0x00,   # new 0xE05B <- old 0x1D   (Ctrl esq -> Win esq)
-        0x1D, 0xE0, 0x5C, 0xE0,   # new 0xE01D <- old 0xE05C (Cmd dir -> Ctrl dir)
-        0x00, 0x00, 0x00, 0x00    # terminator
-    )
+# Posicao fisica (scancode PC) -> scancode do layout Portugues do Windows que
+# escreve o que esta gravado nessa tecla do teclado Apple. As restantes teclas
+# ja coincidem e ficam como estao.
+$positions = @(
+    @(0x29, 0x56, 'canto superior esquerdo (< >)  -> < >'),
+    @(0x56, 0x0D, 'ao lado do Shift esquerdo (§ ±) -> « » (o layout PT não tem § ± numa tecla)'),
+    @(0x0D, 0x1A, 'à direita do '' ? (+ *)         -> + *'),
+    @(0x1A, 0x28, 'à direita do P (º ª)            -> º ª'),
+    @(0x28, 0x2B, 'à direita do Ç (~ ^)            -> ~ ^'),
+    @(0x2B, 0x29, 'à esquerda do Enter (\ |)       -> \ |')
+)
 
-    New-ItemProperty -Path $key -Name 'Scancode Map' -PropertyType Binary -Value $bytes -Force | Out-Null
+# Cada entrada: @(novo scancode, scancode recebido, descricao).
+$entries = New-Object System.Collections.Generic.List[object]
+foreach ($p in $positions) {
+    $raw = $p[0]
+    if ($SwapIsoKeys) {
+        if ($raw -eq 0x29) { $raw = 0x56 } elseif ($raw -eq 0x56) { $raw = 0x29 }
+    }
+    if ($raw -ne $p[1]) { $entries.Add(@($p[1], $raw, $p[2])) }
+}
+if (-not $KeepModifiers) {
+    $entries.Add(@(0x001D, 0xE05B, 'Command esquerdo -> Ctrl esquerdo'))
+    $entries.Add(@(0xE05B, 0x001D, 'Ctrl esquerdo -> Windows esquerda'))
+    $entries.Add(@(0xE01D, 0xE05C, 'Command direito -> Ctrl direito'))
+}
+
+try {
+    # Formato: 8 bytes a zero, DWORD com n. de entradas (incluindo o terminador),
+    # entradas de 4 bytes (novo, antigo; little-endian; extended = 0xE0..), terminador.
+    $bytes = New-Object System.Collections.Generic.List[byte]
+    $bytes.AddRange([byte[]](0, 0, 0, 0, 0, 0, 0, 0))
+    $bytes.AddRange([BitConverter]::GetBytes([uint32]($entries.Count + 1)))
+    foreach ($e in $entries) {
+        $bytes.AddRange([BitConverter]::GetBytes([uint16]$e[0]))
+        $bytes.AddRange([BitConverter]::GetBytes([uint16]$e[1]))
+    }
+    $bytes.AddRange([byte[]](0, 0, 0, 0))
+
+    $key = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout'
+    New-ItemProperty -Path $key -Name 'Scancode Map' -PropertyType Binary -Value $bytes.ToArray() -Force | Out-Null
     $read = (Get-ItemProperty -Path $key -Name 'Scancode Map').'Scancode Map'
     $hex = ($read | ForEach-Object { $_.ToString('X2') }) -join ' '
 
-    $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    $msg = "OK`nAdmin: $isAdmin`nScancode Map: $hex"
+    $lines = foreach ($e in $entries) { '  0x{0:X4} <- 0x{1:X4}  {2}' -f $e[0], $e[1], $e[2] }
+    $msg = "OK`nSwapIsoKeys: $SwapIsoKeys  KeepModifiers: $KeepModifiers`n$($lines -join "`n")`nScancode Map: $hex"
     $msg | Set-Content -Encoding UTF8 $log
     Write-Host $msg
     Write-Host 'Reinicia o Windows para aplicar.'
 }
 catch {
-    "ERROR: $($_.Exception.Message)" | Set-Content -Encoding UTF8 $log
+    $err = "ERROR: $($_.Exception.Message)"
+    $err | Set-Content -Encoding UTF8 $log
+    Write-Host $err -ForegroundColor Red
     exit 1
 }
