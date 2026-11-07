@@ -25,16 +25,17 @@ for t in 0..<256 where KBGetLayoutType(Int16(t)) == UInt32(kKeyboardISO) {
 }
 
 // Teclas de caracteres (codigos virtuais do macOS), com o nome da posicao fisica.
-// 0x32 e a tecla do canto superior esquerdo (scancode PC 0x29) e 0x0A a tecla
-// extra do ISO, ao lado do Shift esquerdo (scancode PC 0x56).
+// 0x0A e a tecla do canto superior esquerdo (scancode PC 0x29; no teclado Apple
+// PT-PT, "§ ±") e 0x32 a tecla extra do ISO, ao lado do Shift esquerdo
+// (scancode PC 0x56; "< >").
 let keys: [(UInt16, String)] = [
-    (0x32, "top-left"), (0x12, "1"), (0x13, "2"), (0x14, "3"), (0x15, "4"), (0x17, "5"),
+    (0x0A, "top-left"), (0x12, "1"), (0x13, "2"), (0x14, "3"), (0x15, "4"), (0x17, "5"),
     (0x16, "6"), (0x1A, "7"), (0x1C, "8"), (0x19, "9"), (0x1D, "0"), (0x1B, "minus"), (0x18, "equal"),
     (0x0C, "Q"), (0x0D, "W"), (0x0E, "E"), (0x0F, "R"), (0x11, "T"), (0x10, "Y"), (0x20, "U"),
     (0x22, "I"), (0x1F, "O"), (0x23, "P"), (0x21, "lbracket"), (0x1E, "rbracket"),
     (0x00, "A"), (0x01, "S"), (0x02, "D"), (0x03, "F"), (0x05, "G"), (0x04, "H"), (0x26, "J"),
     (0x28, "K"), (0x25, "L"), (0x29, "semicolon"), (0x27, "quote"), (0x2A, "backslash"),
-    (0x0A, "iso-left-of-z"), (0x06, "Z"), (0x07, "X"), (0x08, "C"), (0x09, "V"), (0x0B, "B"),
+    (0x32, "iso-left-of-z"), (0x06, "Z"), (0x07, "X"), (0x08, "C"), (0x09, "V"), (0x0B, "B"),
     (0x2D, "N"), (0x2E, "M"), (0x2B, "comma"), (0x2F, "period"), (0x2C, "slash"),
     (0x31, "space"), (0x41, "keypad-decimal"),
 ]

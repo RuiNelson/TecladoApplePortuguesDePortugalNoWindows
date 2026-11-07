@@ -6,7 +6,7 @@
   Windows: só é instalado pelos drivers de teclado da Apple do Boot Camp, que são
   x64. Numa VM, ou em Windows ARM64, não existe.
 - O layout **Português** (`00000816`, `kbdpo.dll`) vem com qualquer Windows.
-  Comparado tecla a tecla com os keycaps Apple PT-PT, só 6 teclas não coincidem
+  Comparado tecla a tecla com os keycaps Apple PT-PT, só 5 teclas não coincidem
   em Normal/Shift, e essas mudam-se de sítio com o `Scancode Map`
   ([`02-scancode-map.md`](02-scancode-map.md)). Não é preciso instalar nada.
 
@@ -20,16 +20,17 @@
 - **Windows:** tabelas do `kbdpo.dll` 10.0.25393.1, publicadas em
   [kbdlayout.info](https://kbdlayout.info/kbdpo/) (ficheiro KLC).
 - **Posições:** os códigos de tecla do macOS correspondem aos scancodes PC pela
-  posição física. As duas teclas ISO são `0x32` → `0x29` (canto superior
-  esquerdo, keycap `<>`) e `0x0A` → `0x56` (ao lado do Shift esquerdo, keycap
-  `§ ±`), o que bate com o que o Windows recebeu no Boot Camp.
+  posição física. As duas teclas ISO são `0x0A` → `0x29` (canto superior
+  esquerdo, keycap `§ ±`) e `0x32` → `0x56` (ao lado do Shift esquerdo, keycap
+  `< >`). Foi assim que o Windows as recebeu numa VM no macOS. No Boot Camp, o
+  teclado Apple ISO envia estas duas teclas trocadas (`0x29` ↔ `0x56`), e o
+  `set-scancode-map.ps1` compensa com `-SwapIsoKeys`.
 
 ## Teclas que mudam de sítio
 
 | Posição física | Scancode | Keycap Apple | Tecla do layout PT usada |
 |---|---|---|---|
-| canto superior esquerdo | `0x29` | `<` `>` | `0x56` (`<` `>`) |
-| ao lado do Shift esquerdo | `0x56` | `§` `±` | `0x0D` (`«` `»`) |
+| canto superior esquerdo | `0x29` | `§` `±` | `0x0D` (`«` `»`) |
 | à direita de `' ?` | `0x0D` | `+` `*` | `0x1A` (`+` `*`, `AltGr`: `¨` morta) |
 | à direita do `P` | `0x1A` | `º` `ª` | `0x28` (`º` `ª`) |
 | à direita do `Ç` | `0x28` | `~` `^` (mortas) | `0x2B` (`~` `^`, mortas) |
@@ -38,7 +39,8 @@
 - O layout Português não tem nenhuma tecla com `§ ±`. Essa posição fica com a
   única tecla PT que sobra, `« »`; o `§` está em `AltGr + 4` e o `±` não existe.
 - Todas as outras teclas já coincidem em Normal e Shift: letras, números,
-  `' ?`, `` ´ ` `` (mortas), `ç Ç`, `, ;`, `. :`, `- _` e espaço.
+  `' ?`, `` ´ ` `` (mortas), `ç Ç`, `< >` (ao lado do Shift esquerdo), `, ;`,
+  `. :`, `- _` e espaço.
 - As teclas mortas (`´`, `` ` ``, `~`, `^` e `¨`) compõem as vogais acentuadas,
   `ã`, `õ` e `ñ` como no macOS.
 
@@ -74,10 +76,10 @@ HKCU\Keyboard Layout\Substitutes
 
 - [`../tools/diagnostics/probe-klid.ps1`](../tools/diagnostics/probe-klid.ps1) —
   mostra o KLID activo (deve ser `00000816`) e a lista de idiomas.
-- Depois de aplicar o `Scancode Map` e reiniciar, no Notepad: o canto superior
-  esquerdo escreve `<`, a tecla `+ *` escreve `+` e a tecla `~ ^` seguida de `a`
-  escreve `ã`. Se o canto superior esquerdo escrever `«`, ver `-SwapIsoKeys` em
-  [`02-scancode-map.md`](02-scancode-map.md).
+- Depois de aplicar o `Scancode Map` e reiniciar, no Notepad: a tecla `< >`
+  escreve `<`, o canto superior esquerdo (`§ ±`) escreve `«`, a tecla `+ *`
+  escreve `+` e a tecla `~ ^` seguida de `a` escreve `ã`. Se a tecla `< >`
+  escrever `«`, ver `-SwapIsoKeys` em [`02-scancode-map.md`](02-scancode-map.md).
 
 ## Reverter
 

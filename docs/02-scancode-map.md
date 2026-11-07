@@ -5,7 +5,7 @@
 Com o layout Português do Windows activo
 ([`01-layout-pt.md`](01-layout-pt.md)), são precisas duas correcções:
 
-1. **Posições** — 6 teclas do teclado Apple PT-PT têm keycaps que, no layout
+1. **Posições** — 5 teclas do teclado Apple PT-PT têm keycaps que, no layout
    Português, estão noutras teclas. O mapa muda-as de sítio.
 2. **Modificadores** — `Command` esquerdo → `Ctrl` esquerdo,
    `Ctrl` esquerdo → tecla `Windows` esquerda e `Command` direito →
@@ -24,12 +24,12 @@ Com o layout Português do Windows activo
 
 ## Mapa por omissão
 
-52 bytes (9 entradas + terminador):
+Para quando o Windows recebe as teclas nas posições normais, como numa VM no
+macOS. 48 bytes (8 entradas + terminador):
 
 ```text
-00 00 00 00 00 00 00 00 0A 00 00 00
-56 00 29 00
-0D 00 56 00
+00 00 00 00 00 00 00 00 09 00 00 00
+0D 00 29 00
 1A 00 0D 00
 28 00 1A 00
 2B 00 28 00
@@ -42,8 +42,7 @@ Com o layout Português do Windows activo
 
 | Bytes | Novo | Recebido | Efeito |
 |---|---|---|---|
-| `56 00 29 00` | `0x0056` | `0x0029` | Canto superior esquerdo (`<>`) escreve `<` / `>` |
-| `0D 00 56 00` | `0x000D` | `0x0056` | Tecla `§ ±` escreve `«` / `»` |
+| `0D 00 29 00` | `0x000D` | `0x0029` | Canto superior esquerdo (`§ ±`) escreve `«` / `»` |
 | `1A 00 0D 00` | `0x001A` | `0x000D` | Tecla `+ *` escreve `+` / `*` |
 | `28 00 1A 00` | `0x0028` | `0x001A` | Tecla `º ª` escreve `º` / `ª` |
 | `2B 00 28 00` | `0x002B` | `0x0028` | Tecla `~ ^` escreve `~` / `^` (mortas) |
@@ -52,26 +51,27 @@ Com o layout Português do Windows activo
 | `5B E0 1D 00` | `0xE05B` | `0x001D` | `Ctrl` esquerdo passa a tecla `Windows` esquerda |
 | `1D E0 5C E0` | `0xE01D` | `0xE05C` | `Command` direito passa a `Ctrl` direito |
 
-As 6 primeiras entradas formam um único ciclo: cada tecla do layout Português
-continua acessível, só numa posição diferente.
+As 5 primeiras entradas formam um único ciclo: cada tecla do layout Português
+continua acessível, só numa posição diferente. A tecla `< >` (`0x56`) já
+coincide e não precisa de entrada.
 
 ## Opções do `set-scancode-map.ps1`
 
 ### `-SwapIsoKeys`
 
-O mapa por omissão pressupõe que o Windows recebe a tecla do canto superior
-esquerdo como `0x29` e a do lado do Shift esquerdo como `0x56`, que é o que
-acontece no Boot Camp. Alguns programas de virtualização enviam estas duas
-teclas trocadas. Sinal: depois de reiniciar, o canto superior esquerdo escreve
-`«` em vez de `<`.
+No Boot Camp, o teclado Apple ISO envia trocadas a tecla do canto superior
+esquerdo e a do lado do Shift esquerdo: a tecla `§ ±` chega como `0x56` e a
+tecla `< >` como `0x29`. Numa VM no macOS chegam na posição normal, porque o
+macOS já as corrige. Sinal de que é preciso: depois de reiniciar, a tecla `< >`
+escreve `«` e o canto superior esquerdo escreve `<`.
 
-Com `-SwapIsoKeys`, o script compensa essa troca: o canto superior esquerdo
-chega como `0x56`, que já é `< >` no layout Português, e a tecla `§ ±` chega
-como `0x29`, que passa a `0x0D` (`« »`). O mapa fica com 8 entradas:
+Com `-SwapIsoKeys`, o script compensa essa troca. O mapa fica com 9 entradas
+(52 bytes):
 
 ```text
-00 00 00 00 00 00 00 00 09 00 00 00
-0D 00 29 00
+00 00 00 00 00 00 00 00 0A 00 00 00
+0D 00 56 00
+56 00 29 00
 1A 00 0D 00
 28 00 1A 00
 2B 00 28 00
@@ -91,8 +91,9 @@ VMware Fusion): sem esta opção, o `Ctrl` que a VM envia passaria a tecla
 
 ## Notas sobre os scancodes
 
-- `0x29` — tecla do canto superior esquerdo (keycap `<>` neste teclado).
-- `0x56` — tecla extra do ISO, ao lado do Shift esquerdo (keycap `§ ±`).
+- `0x29` — tecla do canto superior esquerdo (keycap `§ ±` neste teclado).
+- `0x56` — tecla extra do ISO, ao lado do Shift esquerdo (keycap `< >`).
+- No Boot Camp, estas duas chegam trocadas (ver `-SwapIsoKeys`).
 - `0x0D`, `0x1A`, `0x28`, `0x2B` — teclas à direita de `' ?`, do `P`, do `Ç` e
   à esquerda do Enter.
 - `0x1D` — `Ctrl` esquerdo.
@@ -127,7 +128,7 @@ Reiniciar o Windows.
 ## Efeitos secundários
 
 - O mapa é **global**: afecta todos os teclados e o ecrã de início de sessão.
-  Num teclado de PC português, as 6 teclas trocadas ficam erradas.
+  Num teclado de PC português, as 5 teclas mudadas ficam erradas.
 - Só funciona como esperado com o layout Português activo.
 - Só remapeia *scancodes*. Teclas HID *consumer* (Eject, volume, multimedia)
   não passam por aqui — ver [`03-eject-key.md`](03-eject-key.md).

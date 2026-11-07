@@ -2,13 +2,13 @@
   "keyboardType" : 4,
   "keys" : [
     {
-      "caps" : "<",
-      "macKeyCode" : 50,
-      "none" : "<",
-      "option" : "≤",
+      "caps" : "§",
+      "macKeyCode" : 10,
+      "none" : "§",
+      "option" : "§",
       "position" : "top-left",
-      "shift" : ">",
-      "shiftOption" : "≥"
+      "shift" : "±",
+      "shiftOption" : "±"
     },
     {
       "caps" : "1",
@@ -459,13 +459,13 @@
       "shiftOption" : "›"
     },
     {
-      "caps" : "§",
-      "macKeyCode" : 10,
-      "none" : "§",
-      "option" : "§",
+      "caps" : "<",
+      "macKeyCode" : 50,
+      "none" : "<",
+      "option" : "≤",
       "position" : "iso-left-of-z",
-      "shift" : "±",
-      "shiftOption" : "±"
+      "shift" : ">",
+      "shiftOption" : "≥"
     },
     {
       "caps" : "Z",

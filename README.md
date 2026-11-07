@@ -2,12 +2,12 @@
 
 Configura o Windows para que um teclado Apple PT-PT (por exemplo, o Magic Keyboard) escreva o que está gravado nas teclas. Usa só o layout **Português** que já vem com o Windows e um `Scancode Map` no registo: não instala drivers nem DLLs. Por isso funciona no Boot Camp e em máquinas virtuais (Parallels, VMware Fusion, UTM…), em x64 e em ARM64.
 
-- 6 teclas trocadas de lugar para os caracteres coincidirem com os keycaps Apple;
+- 5 teclas mudadas de lugar para os caracteres coincidirem com os keycaps Apple;
 - `Command` esquerdo → `Ctrl`, `Ctrl` esquerdo → tecla `Windows`, `Command` direito → `Ctrl` direito;
-- opção para VMs que trocam entre si as teclas `<>` e `§ ±`;
+- opção para o Boot Camp, onde o teclado Apple envia trocadas as teclas `§ ±` e `< >`;
 - investigação da tecla **Eject** (consumida pelo filtro `KeyMagic2` do Boot Camp).
 
-> **Estado:** esta versão (layout Português do Windows + `Scancode Map`) ainda não foi testada no Windows. A versão anterior, que usava o layout Apple do Boot Camp, foi confirmada num iMac a 6 de Novembro de 2026.
+> **Estado:** esta versão (layout Português do Windows + `Scancode Map`) está em teste numa VM; no Boot Camp ainda não foi testada. A versão anterior, que usava o layout Apple do Boot Camp, foi confirmada num iMac a 6 de Novembro de 2026.
 
 ---
 
@@ -16,12 +16,12 @@ Configura o Windows para que um teclado Apple PT-PT (por exemplo, o Magic Keyboa
 | Tecla física (keycap Apple) | No Windows |
 |---|---|
 | Letras, números, `' ?`, `` ´ ` `` (mortas), `ç Ç`, `, ;`, `. :`, `- _` | iguais ao keycap |
-| `<>` (canto superior esquerdo) | `<` / `>` |
+| `< >` (ao lado do Shift esquerdo) | `<` / `>` |
 | `+ *` | `+` / `*` |
 | `º ª` | `º` / `ª` |
 | `~ ^` | `~` / `^` (teclas mortas) |
 | `\ \|` | `\` / `\|` |
-| `§ ±` (ao lado do Shift esquerdo) | `«` / `»` (o layout Português não tem `§ ±` numa tecla) |
+| `§ ±` (canto superior esquerdo) | `«` / `»` (o layout Português não tem `§ ±` numa tecla) |
 | `Command` esquerdo | `Ctrl` esquerdo |
 | `Ctrl` esquerdo | tecla `Windows` (menu Iniciar) |
 | `Command` direito | `Ctrl` direito |
@@ -51,7 +51,7 @@ O layout Português do Windows tem alguns símbolos noutras teclas do que o macO
 
 ## Como funciona
 
-O layout Português do Windows (`00000816`, `kbdpo.dll`) e os keycaps Apple PT-PT só diferem, em Normal e Shift, em 6 teclas. O `Scancode Map` muda essas 6 teclas de sítio e troca os modificadores. A comparação foi feita com o layout Portuguese do próprio macOS, exportado com [`tools/macos/dump-mac-layout.swift`](tools/macos/dump-mac-layout.swift) para [`docs/data/mac-portuguese.json`](docs/data/mac-portuguese.json). Detalhes em [`docs/01-layout-pt.md`](docs/01-layout-pt.md) e [`docs/02-scancode-map.md`](docs/02-scancode-map.md).
+O layout Português do Windows (`00000816`, `kbdpo.dll`) e os keycaps Apple PT-PT só diferem, em Normal e Shift, em 5 teclas. O `Scancode Map` muda essas 5 teclas de sítio e troca os modificadores. A comparação foi feita com o layout Portuguese do próprio macOS, exportado com [`tools/macos/dump-mac-layout.swift`](tools/macos/dump-mac-layout.swift) para [`docs/data/mac-portuguese.json`](docs/data/mac-portuguese.json). Detalhes em [`docs/01-layout-pt.md`](docs/01-layout-pt.md) e [`docs/02-scancode-map.md`](docs/02-scancode-map.md).
 
 O layout Apple do Boot Camp (`a0000416`) deixou de ser usado: só existe com os drivers do Boot Camp, que são x64, e não está disponível em VMs nem em Windows ARM64.
 
@@ -79,11 +79,11 @@ Start-Process powershell.exe -Verb RunAs -ArgumentList '-NoProfile','-ExecutionP
 
 O caminho tem de ser absoluto: com `-Verb RunAs`, o PowerShell elevado arranca sempre em `C:\Windows\System32` e ignora o `-WorkingDirectory`. O `-NoExit` mantém a janela aberta para veres o resultado (também fica em `%TEMP%\opencode\scancode-log.txt`). Para passar opções (ver abaixo), acrescenta-as no fim da lista, por exemplo `...,'-SwapIsoKeys'`.
 
-### Confirmar depois de reiniciar (sobretudo em VMs)
+### Confirmar depois de reiniciar
 
-Cada programa de virtualização pode enviar ao Windows scancodes diferentes para algumas teclas. Abre o Notepad e confirma:
+O Windows pode receber scancodes diferentes para algumas teclas, conforme corre numa VM ou no Boot Camp. Abre o Notepad e confirma:
 
-- **Tecla do canto superior esquerdo (`<>`):** se escrever `<`, está certo. Se escrever `«`, a VM troca as duas teclas ISO: volta a correr o passo 2 com `-SwapIsoKeys` e reinicia.
+- **Tecla `< >` (ao lado do Shift esquerdo):** se escrever `<`, está certo. Se escrever `«` (e a do canto superior esquerdo escrever `<`), o Windows recebe as duas teclas ISO trocadas: volta a correr o passo 2 com `-SwapIsoKeys` e reinicia. É o caso do Boot Camp; numa VM no macOS as teclas chegam na posição normal.
 - **`Command` + `C` / `Command` + `V`:** devem copiar e colar. Se o `Command` abrir o menu Iniciar ou não funcionar como `Ctrl`, a VM já está a traduzir os modificadores (por exemplo, com perfis de atalhos do Parallels ou do VMware Fusion): volta a correr o passo 2 com `-KeepModifiers`, ou desliga essa tradução na VM.
 
 As duas opções podem ser usadas em conjunto:
@@ -107,7 +107,7 @@ Para voltar ao layout original, ver a secção **Reverter** em [`docs/01-layout-
 
 ## Avisos
 
-- O `Scancode Map` é **global**: aplica-se a todos os teclados ligados ao PC e ao ecrã de início de sessão. Num teclado de PC português, as 6 teclas trocadas ficam erradas (por exemplo, a tecla `« »` passa a escrever `+ *`), e a tecla `Windows` direita passa a `Ctrl` direito.
+- O `Scancode Map` é **global**: aplica-se a todos os teclados ligados ao PC e ao ecrã de início de sessão. Num teclado de PC português, as 5 teclas mudadas ficam erradas (por exemplo, a tecla `« »` passa a escrever `+ *`), e a tecla `Windows` direita passa a `Ctrl` direito.
 - As alterações ao `Scancode Map` só entram em vigor **depois de reiniciar**.
 - O `Scancode Map` só remapeia *scancodes*. Não vê teclas HID do tipo *consumer* (Eject, volume, multimedia); para essas é preciso software/driver.
 - O mapa pressupõe o layout **Português** activo. Com outro layout (por exemplo, o Apple do Boot Camp), as teclas trocadas escrevem outros caracteres; o `enable-pt-layout.ps1` tira o layout Apple da lista de idiomas.

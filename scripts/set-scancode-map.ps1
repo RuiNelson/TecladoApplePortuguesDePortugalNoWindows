@@ -4,9 +4,11 @@
 # Depois de correr, reiniciar o Windows.
 # Gravado em UTF-8 com BOM para o Windows PowerShell 5.1 ler bem os caracteres § ± « » º ª.
 #
-#   -SwapIsoKeys    para VMs que trocam a tecla do canto superior esquerdo com a
-#                   do lado do Shift esquerdo. Sinal: depois de reiniciar, a tecla
-#                   do canto superior esquerdo escreve « em vez de <.
+#   -SwapIsoKeys    o Windows recebe trocadas a tecla do canto superior esquerdo
+#                   (§ ±) e a do lado do Shift esquerdo (< >). Acontece no Boot Camp,
+#                   porque o teclado Apple ISO as envia trocadas; numa VM no macOS
+#                   chegam na posicao normal. Sinal: depois de reiniciar, a tecla
+#                   < > escreve « em vez de <.
 #   -KeepModifiers  nao troca Command/Ctrl (por exemplo, se a VM ja o faz).
 param(
     [switch]$SwapIsoKeys,
@@ -17,11 +19,11 @@ $log = Join-Path $env:TEMP 'opencode\scancode-log.txt'
 New-Item -ItemType Directory -Force -Path (Split-Path $log) | Out-Null
 
 # Posicao fisica (scancode PC) -> scancode do layout Portugues do Windows que
-# escreve o que esta gravado nessa tecla do teclado Apple. As restantes teclas
-# ja coincidem e ficam como estao.
+# escreve o que esta gravado nessa tecla do teclado Apple. As teclas que nao
+# estao aqui ja coincidem e ficam como estao.
 $positions = @(
-    @(0x29, 0x56, 'canto superior esquerdo (< >)  -> < >'),
-    @(0x56, 0x0D, 'ao lado do Shift esquerdo (§ ±) -> « » (o layout PT não tem § ± numa tecla)'),
+    @(0x29, 0x0D, 'canto superior esquerdo (§ ±)   -> « » (o layout PT não tem § ± numa tecla)'),
+    @(0x56, 0x56, 'ao lado do Shift esquerdo (< >) -> < >'),
     @(0x0D, 0x1A, 'à direita do '' ? (+ *)         -> + *'),
     @(0x1A, 0x28, 'à direita do P (º ª)            -> º ª'),
     @(0x28, 0x2B, 'à direita do Ç (~ ^)            -> ~ ^'),
