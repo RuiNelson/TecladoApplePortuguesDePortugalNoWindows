@@ -69,4 +69,13 @@ $fg = [LangSwitch]::GetForegroundWindow()
 
 '--- Result ---'
 Get-WinUserLanguageList | Select-Object LanguageTag, InputMethodTips | Format-Table -AutoSize
-Get-WinDefaultInputMethodOverride | Format-List
+# Get-WinDefaultInputMethodOverride falha em algumas instalacoes
+# ("Exception of type 'System.Exception' was thrown") mesmo depois de o Set
+# ter funcionado. Nesse caso le-se o valor directamente do registo.
+try {
+  Get-WinDefaultInputMethodOverride | Format-List
+}
+catch {
+  $override = (Get-ItemProperty -Path 'HKCU:\Control Panel\International\User Profile' -Name InputMethodOverride -ErrorAction SilentlyContinue).InputMethodOverride
+  "InputMethodOverride (registo): $override"
+}

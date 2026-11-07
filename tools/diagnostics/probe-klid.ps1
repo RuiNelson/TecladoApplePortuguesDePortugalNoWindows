@@ -11,4 +11,10 @@ $sb = New-Object System.Text.StringBuilder 64
 [void][KlidProbe]::GetKeyboardLayoutName($sb)
 "KLID: $($sb.ToString())"
 Get-WinUserLanguageList | Select-Object LanguageTag, InputMethodTips | Format-Table -AutoSize
-Get-WinDefaultInputMethodOverride | Format-List
+try {
+  Get-WinDefaultInputMethodOverride -ErrorAction Stop | Format-List
+}
+catch {
+  $override = (Get-ItemProperty -Path 'HKCU:\Control Panel\International\User Profile' -Name InputMethodOverride -ErrorAction SilentlyContinue).InputMethodOverride
+  "InputMethodOverride (registo): $override"
+}
