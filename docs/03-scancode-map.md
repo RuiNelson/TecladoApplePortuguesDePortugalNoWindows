@@ -2,14 +2,23 @@
 
 ## Porquê
 
-Com o layout Português do Windows activo
-([`01-layout-pt.md`](01-layout-pt.md)), são precisas duas correcções:
+O mapa depende do layout activo e de como o Windows recebe as teclas:
 
-1. **Posições** — 5 teclas do teclado Apple PT-PT têm keycaps que, no layout
-   Português, estão noutras teclas. O mapa muda-as de sítio.
-2. **Modificadores** — `Command` esquerdo → `Ctrl` esquerdo,
+1. **Posições** — com o layout Apple PT-PT ([`01-layout-apple.md`](01-layout-apple.md)),
+   as teclas já estão no sítio certo. Com o layout Português do Windows
+   ([`02-layout-pt.md`](02-layout-pt.md)), 5 teclas têm keycaps que estão
+   noutras teclas, e o mapa muda-as de sítio.
+2. **Teclas ISO** — no Boot Camp, o teclado Apple ISO envia trocadas a tecla do
+   canto superior esquerdo (`§ ±`) e a do lado do Shift esquerdo (`< >`). Numa
+   VM no macOS chegam na posição normal, porque o macOS já as corrige.
+3. **Modificadores** — `Command` esquerdo → `Ctrl` esquerdo,
    `Ctrl` esquerdo → tecla `Windows` esquerda e `Command` direito →
    `Ctrl` direito (o teclado Apple não tem tecla `Ctrl` do lado direito).
+
+O `set-scancode-map.ps1` escolhe sozinho: se o layout Apple estiver instalado
+(drivers do Boot Camp), usa o mapa do layout Apple com a troca ISO; senão, o
+mapa do layout Português sem a troca. As opções abaixo permitem forçar outra
+combinação.
 
 ## Formato do `Scancode Map`
 
@@ -22,10 +31,31 @@ Com o layout Português do Windows activo
   - teclas *extended* usam o byte alto `0xE0`;
   - terminador: 4 bytes a zero.
 
-## Mapa por omissão
+## Boot Camp: layout Apple
 
-Para quando o Windows recebe as teclas nas posições normais, como numa VM no
-macOS. 48 bytes (8 entradas + terminador):
+36 bytes (5 entradas + terminador). É o mapa confirmado no iMac de teste:
+
+```text
+00 00 00 00 00 00 00 00 06 00 00 00
+56 00 29 00
+29 00 56 00
+1D 00 5B E0
+5B E0 1D 00
+1D E0 5C E0
+00 00 00 00
+```
+
+| Bytes | Novo | Recebido | Efeito |
+|---|---|---|---|
+| `56 00 29 00` | `0x0056` | `0x0029` | Tecla `< >` (chega como `0x29`) escreve `<` / `>` |
+| `29 00 56 00` | `0x0029` | `0x0056` | Tecla `§ ±` (chega como `0x56`) escreve `§` / `±` |
+| `1D 00 5B E0` | `0x001D` | `0xE05B` | `Command` esquerdo passa a `Ctrl` esquerdo |
+| `5B E0 1D 00` | `0xE05B` | `0x001D` | `Ctrl` esquerdo passa a tecla `Windows` esquerda |
+| `1D E0 5C E0` | `0xE01D` | `0xE05C` | `Command` direito passa a `Ctrl` direito |
+
+## VM: layout Português
+
+48 bytes (8 entradas + terminador):
 
 ```text
 00 00 00 00 00 00 00 00 09 00 00 00
@@ -57,16 +87,21 @@ coincide e não precisa de entrada.
 
 ## Opções do `set-scancode-map.ps1`
 
+### `-Layout Auto | Apple | Portuguese`
+
+Escolhe o mapa. Por omissão (`Auto`) é `Apple` se o layout `a0000416` estiver
+instalado e `Portuguese` caso contrário. Tem de ser o mesmo layout que o
+`enable-layout.ps1` activou.
+
 ### `-SwapIsoKeys`
 
-No Boot Camp, o teclado Apple ISO envia trocadas a tecla do canto superior
-esquerdo e a do lado do Shift esquerdo: a tecla `§ ±` chega como `0x56` e a
-tecla `< >` como `0x29`. Numa VM no macOS chegam na posição normal, porque o
-macOS já as corrige. Sinal de que é preciso: depois de reiniciar, a tecla `< >`
-escreve `«` e o canto superior esquerdo escreve `<`.
+Compensa a troca das teclas ISO. Por omissão liga-se quando há drivers do Boot
+Camp (o layout Apple está instalado) e desliga-se nas VMs; `-SwapIsoKeys`
+liga-a e `-SwapIsoKeys:$false` desliga-a à força. Sinal de que está errada:
+depois de reiniciar, a tecla `< >` não escreve `<`.
 
-Com `-SwapIsoKeys`, o script compensa essa troca. O mapa fica com 9 entradas
-(52 bytes):
+Por exemplo, com o layout Português no Boot Camp (`-Layout Portuguese`, troca
+ligada), o mapa fica com 9 entradas (52 bytes):
 
 ```text
 00 00 00 00 00 00 00 00 0A 00 00 00
@@ -110,7 +145,7 @@ VMware Fusion): sem esta opção, o `Ctrl` que a VM envia passaria a tecla
 ## Aplicar
 
 ```powershell
-# Executar como administrador; opções: -SwapIsoKeys, -KeepModifiers
+# Executar como administrador; opções: -Layout, -SwapIsoKeys, -KeepModifiers
 powershell -ExecutionPolicy Bypass -File .\scripts\set-scancode-map.ps1
 ```
 
@@ -128,7 +163,8 @@ Reiniciar o Windows.
 ## Efeitos secundários
 
 - O mapa é **global**: afecta todos os teclados e o ecrã de início de sessão.
-  Num teclado de PC português, as 5 teclas mudadas ficam erradas.
-- Só funciona como esperado com o layout Português activo.
+  Com o layout Português, num teclado de PC português as 5 teclas mudadas
+  ficam erradas.
+- Só funciona como esperado com o layout para que foi gravado.
 - Só remapeia *scancodes*. Teclas HID *consumer* (Eject, volume, multimedia)
-  não passam por aqui — ver [`03-eject-key.md`](03-eject-key.md).
+  não passam por aqui — ver [`04-eject-key.md`](04-eject-key.md).

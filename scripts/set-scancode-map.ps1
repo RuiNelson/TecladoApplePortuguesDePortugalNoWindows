@@ -1,16 +1,23 @@
-﻿#requires -RunAsAdministrator
-# Aplica o Scancode Map descrito em docs/02-scancode-map.md.
-# Pressupoe o layout Portugues do Windows (00000816): correr antes enable-pt-layout.ps1.
-# Depois de correr, reiniciar o Windows.
+﻿﻿#requires -RunAsAdministrator
+# Aplica o Scancode Map descrito em docs/03-scancode-map.md.
+# Correr depois de enable-layout.ps1 e reiniciar o Windows a seguir.
 # Gravado em UTF-8 com BOM para o Windows PowerShell 5.1 ler bem os caracteres § ± « » º ª.
 #
-#   -SwapIsoKeys    o Windows recebe trocadas a tecla do canto superior esquerdo
-#                   (§ ±) e a do lado do Shift esquerdo (< >). Acontece no Boot Camp,
-#                   porque o teclado Apple ISO as envia trocadas; numa VM no macOS
-#                   chegam na posicao normal. Sinal: depois de reiniciar, a tecla
-#                   < > escreve « em vez de <.
-#   -KeepModifiers  nao troca Command/Ctrl (por exemplo, se a VM ja o faz).
+#   -Layout Auto        (por omissao) Apple se o layout Apple PT-PT do Boot Camp
+#                       estiver instalado; senao, Portugues. Tem de ser o mesmo
+#                       layout que o enable-layout.ps1 activou.
+#   -Layout Apple       mapa para o layout Apple PT-PT (a0000416).
+#   -Layout Portuguese  mapa para o layout Portugues do Windows (00000816).
+#   -SwapIsoKeys        o Windows recebe trocadas a tecla do canto superior esquerdo
+#                       (§ ±) e a do lado do Shift esquerdo (< >). Por omissao,
+#                       liga-se quando ha drivers do Boot Camp (o teclado Apple ISO
+#                       envia-as trocadas) e desliga-se nas VMs (o macOS ja as
+#                       corrige). -SwapIsoKeys:$false desliga-a a forca.
+#                       Sinal de que esta errado: a tecla < > nao escreve <.
+#   -KeepModifiers      nao troca Command/Ctrl (por exemplo, se a VM ja o faz).
 param(
+    [ValidateSet('Auto', 'Apple', 'Portuguese')]
+    [string]$Layout = 'Auto',
     [switch]$SwapIsoKeys,
     [switch]$KeepModifiers
 )
@@ -18,23 +25,44 @@ $ErrorActionPreference = 'Stop'
 $log = Join-Path $env:TEMP 'opencode\scancode-log.txt'
 New-Item -ItemType Directory -Force -Path (Split-Path $log) | Out-Null
 
-# Posicao fisica (scancode PC) -> scancode do layout Portugues do Windows que
-# escreve o que esta gravado nessa tecla do teclado Apple. As teclas que nao
-# estao aqui ja coincidem e ficam como estao.
-$positions = @(
-    @(0x29, 0x0D, 'canto superior esquerdo (§ ±)   -> « » (o layout PT não tem § ± numa tecla)'),
-    @(0x56, 0x56, 'ao lado do Shift esquerdo (< >) -> < >'),
-    @(0x0D, 0x1A, 'à direita do '' ? (+ *)         -> + *'),
-    @(0x1A, 0x28, 'à direita do P (º ª)            -> º ª'),
-    @(0x28, 0x2B, 'à direita do Ç (~ ^)            -> ~ ^'),
-    @(0x2B, 0x29, 'à esquerda do Enter (\ |)       -> \ |')
-)
+# O layout Apple PT-PT so existe com os drivers do Boot Camp; serve tambem para
+# saber se estamos no Boot Camp.
+$appleFile = (Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\a0000416' -Name 'Layout File' -ErrorAction SilentlyContinue).'Layout File'
+$appleInstalled = [bool]($appleFile -and (Test-Path (Join-Path "$env:SystemRoot\System32" $appleFile)))
+
+if ($Layout -eq 'Auto') {
+    $Layout = if ($appleInstalled) { 'Apple' } else { 'Portuguese' }
+}
+if ($Layout -eq 'Apple' -and -not $appleInstalled) {
+    Write-Warning 'O layout Apple PT-PT (a0000416) nao esta instalado; este mapa so serve com esse layout.'
+}
+$swap = if ($PSBoundParameters.ContainsKey('SwapIsoKeys')) { [bool]$SwapIsoKeys } else { $appleInstalled }
+
+# Posicao fisica (scancode PC) -> scancode que, no layout escolhido, escreve o que
+# esta gravado nessa tecla do teclado Apple. As teclas que nao estao aqui ja
+# coincidem e ficam como estao.
+if ($Layout -eq 'Apple') {
+    $positions = @(
+        @(0x56, 0x56, 'ao lado do Shift esquerdo (< >) -> < >'),
+        @(0x29, 0x29, 'canto superior esquerdo (§ ±)   -> § ±')
+    )
+}
+else {
+    $positions = @(
+        @(0x29, 0x0D, 'canto superior esquerdo (§ ±)   -> « » (o layout PT não tem § ± numa tecla)'),
+        @(0x56, 0x56, 'ao lado do Shift esquerdo (< >) -> < >'),
+        @(0x0D, 0x1A, 'à direita do '' ? (+ *)         -> + *'),
+        @(0x1A, 0x28, 'à direita do P (º ª)            -> º ª'),
+        @(0x28, 0x2B, 'à direita do Ç (~ ^)            -> ~ ^'),
+        @(0x2B, 0x29, 'à esquerda do Enter (\ |)       -> \ |')
+    )
+}
 
 # Cada entrada: @(novo scancode, scancode recebido, descricao).
 $entries = New-Object System.Collections.Generic.List[object]
 foreach ($p in $positions) {
     $raw = $p[0]
-    if ($SwapIsoKeys) {
+    if ($swap) {
         if ($raw -eq 0x29) { $raw = 0x56 } elseif ($raw -eq 0x56) { $raw = 0x29 }
     }
     if ($raw -ne $p[1]) { $entries.Add(@($p[1], $raw, $p[2])) }
@@ -63,7 +91,7 @@ try {
     $hex = ($read | ForEach-Object { $_.ToString('X2') }) -join ' '
 
     $lines = foreach ($e in $entries) { '  0x{0:X4} <- 0x{1:X4}  {2}' -f $e[0], $e[1], $e[2] }
-    $msg = "OK`nSwapIsoKeys: $SwapIsoKeys  KeepModifiers: $KeepModifiers`n$($lines -join "`n")`nScancode Map: $hex"
+    $msg = "OK`nLayout: $Layout  SwapIsoKeys: $swap  KeepModifiers: $KeepModifiers`n$($lines -join "`n")`nScancode Map: $hex"
     $msg | Set-Content -Encoding UTF8 $log
     Write-Host $msg
     Write-Host 'Reinicia o Windows para aplicar.'

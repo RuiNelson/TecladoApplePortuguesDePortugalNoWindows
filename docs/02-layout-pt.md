@@ -1,14 +1,17 @@
-# Layout Português do Windows (`00000816`)
+# Layout Português do Windows (`00000816`) — VMs e sem Boot Camp
 
 ## Porquê este layout
 
-- O layout Apple PT-PT do Boot Camp (`a0000416`, `PortuguA.dll`) não vem com o
-  Windows: só é instalado pelos drivers de teclado da Apple do Boot Camp, que são
-  x64. Numa VM, ou em Windows ARM64, não existe.
+- O layout Apple PT-PT do Boot Camp (`a0000416`, `PortuguA.dll`,
+  [`01-layout-apple.md`](01-layout-apple.md)) não vem com o Windows: só é
+  instalado pelos drivers de teclado da Apple do Boot Camp, que são x64. Numa
+  VM, ou em Windows ARM64, não existe. Quando não está instalado, o
+  `enable-layout.ps1` e o `set-scancode-map.ps1` usam o layout Português
+  (`-Layout Auto`); também se pode forçar com `-Layout Portuguese`.
 - O layout **Português** (`00000816`, `kbdpo.dll`) vem com qualquer Windows.
   Comparado tecla a tecla com os keycaps Apple PT-PT, só 5 teclas não coincidem
   em Normal/Shift, e essas mudam-se de sítio com o `Scancode Map`
-  ([`02-scancode-map.md`](02-scancode-map.md)). Não é preciso instalar nada.
+  ([`03-scancode-map.md`](03-scancode-map.md)). Não é preciso instalar nada.
 
 ## Como foi feita a comparação
 
@@ -49,13 +52,14 @@ As diferenças com `AltGr` (Option no macOS) estão na tabela **Símbolos com
 
 ## O que o script faz
 
-[`../scripts/enable-pt-layout.ps1`](../scripts/enable-pt-layout.ps1):
+[`../scripts/enable-layout.ps1`](../scripts/enable-layout.ps1), com o layout
+Português:
 
 1. guarda um backup da lista de idiomas em `%TEMP%\opencode\winlang-backup.json`
    (só se ainda não existir, para não perder o original);
 2. remove a substituição `HKCU\Keyboard Layout\Substitutes\00000816 = a0000416`,
-   se existir (deixada pela versão anterior deste repositório, que usava o
-   layout Apple do Boot Camp);
+   se existir (é assim que o Windows guarda o tip do layout Apple; com ela,
+   "Português" continuaria a ser o layout Apple);
 3. deixa `pt-PT` só com o tip `0816:00000816`, tira o layout Apple
    (`a0000416`) de todos os idiomas e confirma que o Windows aceitou a lista;
 4. define `0816:00000816` como método de entrada predefinido;
@@ -79,7 +83,7 @@ HKCU\Keyboard Layout\Substitutes
 - Depois de aplicar o `Scancode Map` e reiniciar, no Notepad: a tecla `< >`
   escreve `<`, o canto superior esquerdo (`§ ±`) escreve `«`, a tecla `+ *`
   escreve `+` e a tecla `~ ^` seguida de `a` escreve `ã`. Se a tecla `< >`
-  escrever `«`, ver `-SwapIsoKeys` em [`02-scancode-map.md`](02-scancode-map.md).
+  escrever `«`, ver `-SwapIsoKeys` em [`03-scancode-map.md`](03-scancode-map.md).
 
 ## Reverter
 

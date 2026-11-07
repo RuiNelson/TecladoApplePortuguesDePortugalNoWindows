@@ -30,8 +30,8 @@ powershell -ExecutionPolicy Bypass -File .\key-hook.ps1
 
 ## `probe-klid.ps1`
 
-Mostra o KLID activo (`GetKeyboardLayoutName`; deve ser `00000816`), a lista de
-idiomas e o *default input method override*.
+Mostra o KLID activo (`GetKeyboardLayoutName`; deve ser `A0000416` no Boot Camp
+e `00000816` numa VM), a lista de idiomas e o *default input method override*.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\probe-klid.ps1
